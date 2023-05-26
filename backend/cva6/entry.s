@@ -1,5 +1,5 @@
 HARTID=0xf14
-TO_HOST=0x7c0
+TO_HOST=0x80000000
 
   # Get hardware thread id
   csrr a0, HARTID
@@ -15,4 +15,11 @@ TO_HOST=0x7c0
   # Jump-and-link to main
   jal main
 
+  csrr a0, HARTID
+  bnez a0, 1f
+  li a5, 1
+  slli a5, a5, 31
+  li a4, 1
+  sd a4, 0(a5)
+1:
   j .

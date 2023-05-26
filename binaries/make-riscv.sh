@@ -16,12 +16,13 @@ n_compiling_errors=0
 n_no_opcode=0
 i=0
 
-#ATOMICS/CO and HAND litmus tests can't actually be compiled
-for FILE in $(find $1 -name "*.litmus" | grep -v "ATOMICS/CO\|HAND")
+# ATOMICS/CO and HAND litmus tests can't actually be compiled
+# compile only the tests which have max. 2 processors
+for FILE in $(find $1 -name "*.litmus" | grep -v "ATOMICS/CO\|HAND" | xargs grep -L P2)
  do
   echo "Processing file $FILE"
   if ! grep -q sw.rl $FILE && ! grep -q lw.aq $FILE;then
-    cp -r ../backend/ backend-tmp
+      cp -r ../backend/ backend-tmp
       if ../frontend/litmus $FILE backend-tmp/testcase.c backend-tmp/testcase.h $2; then
            cd backend-tmp
            ./make-riscv.sh
@@ -30,6 +31,8 @@ for FILE in $(find $1 -name "*.litmus" | grep -v "ATOMICS/CO\|HAND")
            if cp backend-tmp/main.elf $OUTFILE; then
                OUTFILE=`basename $FILE .litmus`.dump
                cp backend-tmp/main.dump $OUTFILE
+               OUTFILE=`basename $FILE .litmus`.hex
+               cp backend-tmp/main.hex $OUTFILE
                n_compiled_tests=$((n_compiled_tests+1))
            else
               n_compiling_errors=$((n_compiled_errors+1))
@@ -42,7 +45,7 @@ for FILE in $(find $1 -name "*.litmus" | grep -v "ATOMICS/CO\|HAND")
   fi
   rm -rf backend-tmp
   n_tests=$((n_tests+1))
- done 
+done
  echo "#tests               = $n_tests"
  echo "#tests well compiled = $n_compiled_tests"
  echo "#parsing errors      = $n_parsing_errors"

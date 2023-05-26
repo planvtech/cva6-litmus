@@ -1,2 +1,2 @@
-rm -f *.bin *.elf *.dump
+rm -f *.bin *.elf *.dump *.hex
 rm -rf backend-tmp

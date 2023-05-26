@@ -1,14 +1,14 @@
 #!/bin/bash
 
 dest=run.log
-source=./log
+source=.
 
 rm $dest
 touch $dest
 i=0
-for FILE in $(ls $source) 
+for FILE in $(ls $source/*.log) 
 do 
-
+  if [[ "$FILE" != *"_sim"* ]] && [[ "$FILE" != "$dest" ]]; then
 	#check that the litmus test terminated correctly
 	if grep -q Time $source/$FILE; then 
 		cat $source/$FILE >> $dest
@@ -17,6 +17,7 @@ do
 	else
 		echo "'Time' not found in $FILE"
 	fi
+  fi
 
 
 done 

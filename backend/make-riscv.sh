@@ -1,10 +1,10 @@
 PLATFORM="cva6"
 
-CC="/usr/pack/riscv-1.0-kgf/riscv64-gcc-8.5.0/bin/riscv64-unknown-elf-gcc"
-AS="/usr/pack/riscv-1.0-kgf/riscv64-gcc-8.5.0/bin/riscv64-unknown-elf-as"
-LD="/usr/pack/riscv-1.0-kgf/riscv64-gcc-8.5.0/bin/riscv64-unknown-elf-ld"
-OBJCOPY="/usr/pack/riscv-1.0-kgf/riscv64-gcc-8.5.0/bin/riscv64-unknown-elf-objcopy"
-OBJDUMP="/usr/pack/riscv-1.0-kgf/riscv64-gcc-8.5.0/bin/riscv64-unknown-elf-objdump"
+CC="riscv64-unknown-elf-gcc"
+AS="riscv64-unknown-elf-as"
+LD="riscv64-unknown-elf-ld"
+OBJCOPY="riscv64-unknown-elf-objcopy"
+OBJDUMP="riscv64-unknown-elf-objdump"
 
 OPT="-O -fno-builtin"          #optimize even more and avoid to use standard c functions
 CFLAGS="$OPT -I. -mcmodel=medany -g"  #include actuar directory to search directories
@@ -21,4 +21,7 @@ done
 $AS -o entry.o cva6/entry.s
 $LD $LDFLAGS -o main.elf entry.o $OFILES
 $OBJDUMP -S main.elf > main.dump
-#elf2hex 16 65536 main.elf > 
+$OBJCOPY -O verilog main.elf main.vh
+/home/max/Workarea/culsans/tests/integration/test_automation/vh2hex.py -m main.vh -o main.hex -b 0x80000000 -d 0x80000000 -i 0x80100000
+rm main.vh
+#elf2hex 16 65536 main.elf >
