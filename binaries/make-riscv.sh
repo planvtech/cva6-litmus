@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [ "$1" = "" ]; then
-  echo "Usage: make-riscv.sh <path-to-litmus-files>"
+if [[ "$#" -ne 2 ]]; then
+  echo "Usage: make-riscv.sh <path-to-litmus-files> <#proc>"
   exit
 fi
 
@@ -17,8 +17,8 @@ n_no_opcode=0
 i=0
 
 # ATOMICS/CO and HAND litmus tests can't actually be compiled
-# compile only the tests which have max. 2 processors
-for FILE in $(find $1 -name "*.litmus" | grep -v "ATOMICS/CO\|HAND" | xargs grep -L P2)
+# compile only the tests which have a max number of processors as defined per command line
+for FILE in $(find $1 -name "*.litmus" | grep -v "ATOMICS/CO\|HAND" | xargs grep -L P$2)
  do
   echo "Processing file $FILE"
   if ! grep -q sw.rl $FILE && ! grep -q lw.aq $FILE;then
